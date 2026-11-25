@@ -138,7 +138,7 @@ The file stays on Drive only. SHA-256 `e7baf3a48cb94f559d4467fc75410836f546c7c23
 
 ### Run 02: Step 2, dev runs, attempt 1
 
-**2026-11-25 · Colab T4 · ❌ superseded by Run 03** · folder [`Run02_2026-11-25_Step2_dev-runs-attempt1`](Run02_2026-11-25_Step2_dev-runs-attempt1/) · outputs commit `81aa305` · notebook not saved
+**2026-11-25 · Colab T4 · ❌ superseded by Run 03** · folder [`Run02_2026-11-25_Step2_dev-runs-attempt1`](Run02_2026-11-25_Step2_dev-runs-attempt1/) · outputs commit `81aa305` · notebook saved (downloaded before the Run 03 restart)
 
 | Model | GPU memory after load | Smoke test | In-scope answered | Out-of-scope refused | Mean latency |
 |---|---|---|---|---|---|
