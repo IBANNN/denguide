@@ -22,7 +22,8 @@ How to read this page:
 |---|---|---|---|---|---|---|---|
 | [Run 01](#run-01-step-1-index-and-cutoff) | 2026-11-25 | 1. Index and cutoff | ✅ done | `c588cf7`, `43df3db` | first run | 151 chunks; dev recall@4 1.0, MRR 0.792; cutoff 0.61 | I-01 |
 | [Run 02](#run-02-step-2-dev-runs-attempt-1) | 2026-11-25 | 2. Dev runs | ❌ superseded | `43df3db` | both LLMs added (float16) | Qwen 11 of 12 in-scope answered; Gemma empty | I-02 to I-06 |
-| [Run 03](#run-03-step-2-dev-runs-attempt-2) | 2026-11-25 | 2. Dev runs | ⏳ next | `5bb1978` | cutoff as a gate; Gemma in float32 | | |
+| [Run 03](#run-03-step-2-dev-runs-attempt-2) | 2026-11-25 | 2. Dev runs | ✅ done | `dc574ee` (fixes from `5bb1978`) | cutoff as a gate; Gemma in float32 | both models: 12 of 12 in-scope answered, 3 of 3 refused; citation accuracy Qwen 25/25, Gemma 18/20 | I-07, I-08, I-09 |
+| Run 04 | | 2. Dev runs | 💭 to decide | | prompt v2, only if the group changes the prompt (I-04 to I-08) | | |
 
 ## Settings per run
 
@@ -45,11 +46,14 @@ Prompt v1 is `SYSTEM_PROMPT` in `src/rag.py` as of commit `6aa7cc7`. Any prompt 
 | ID | Found in | Area | Problem | Change | Status |
 |---|---|---|---|---|---|
 | I-01 | Run 01 | Retrieval | Cutoffs 0.59 to 0.62 tied and the lowest (0.59) was picked, 0.002 above an out-of-scope score | Take the middle of a tie (`43df3db`) | ✅ fixed in Run 01 |
-| I-02 | Run 02 | Model | Gemma 3 12B gave empty output in float16 on the T4 | Gemma in float32 (`5bb1978`) | 🔁 check in Run 03 |
-| I-03 | Run 02 | Retrieval | Cutoff applied to each chunk, so the answer chunk for d03 (p. 40, rank 3) never reached the LLM | Cutoff as a gate on the best chunk (`5bb1978`) | 🔁 check in Run 03 |
-| I-04 | Run 02 | Prompt | d09 says "recommends against" where the guideline says "suggests against" | none yet | 🔍 open, teammate review |
-| I-05 | Run 02 | Prompt | d11 lists admission criteria from another group (pp. 59-60) next to the DOH criteria | none yet | 🔍 open, teammate review |
-| I-06 | Run 02 | Prompt | d12 is a Taglish question answered in English | none yet | 🔍 open, teammate review |
+| I-02 | Run 02 | Model | Gemma 3 12B gave empty output in float16 on the T4 | Gemma in float32 (`5bb1978`) | ✅ confirmed in Run 03 |
+| I-03 | Run 02 | Retrieval | Cutoff applied to each chunk, so the answer chunk for d03 (p. 40, rank 3) never reached the LLM | Cutoff as a gate on the best chunk (`5bb1978`) | ✅ confirmed in Run 03 |
+| I-04 | Run 02 | Prompt | Qwen d09 says "recommends against" where the guideline says "suggests against" | none yet | 🔍 open, still in Run 03 |
+| I-05 | Run 02 | Prompt | d11 lists admission criteria from other groups (pp. 59-60, 2009 WHO) next to the DOH criteria | none yet | 🔍 open, both models in Run 03 |
+| I-06 | Run 02 | Prompt | Taglish questions answered in English (Qwen d12; Gemma d11 and d12) | none yet | 🔍 open, both models in Run 03 |
+| I-07 | Run 03 | Prompt | Qwen adds sentences without a citation, some not in the excerpts (d03: why IgM/IgG works after day 5) | none yet | 🔍 open, teammate review |
+| I-08 | Run 03 | Prompt | Gemma copies the guideline's "we recommend", so the answer reads as Denguide's own recommendation | none yet | 🔍 open, teammate review |
+| I-09 | Run 03 | Model | Gemma cited 2 pages it was not given (d02 p. 33, d08 p. 93; the tawa-tawa recommendation is on p. 90) | none yet | 🔍 open, teammate review |
 
 Status key: ✅ fixed and confirmed · 🔁 fixed, waiting for the next run to confirm · 🔍 open.
 Prompt issues are reviewed by a member who did not write the unseen set. Colab setup fixes (token handling,
@@ -160,8 +164,36 @@ d04, d06, d07, d08, d10, d12). Open points: I-04 (d09 wording), I-05 (d11 attrib
 
 ### Run 03: Step 2, dev runs, attempt 2
 
-**⏳ next** · code `5bb1978`
+**2026-11-25 · Colab T4 · ✅ done** · folder [`Run03_2026-11-25_Step2_dev-runs-attempt2`](Run03_2026-11-25_Step2_dev-runs-attempt2/) · code `dc574ee`
+· outputs commit `12421aa` (its message says "Step 2a…" by mistake; it holds the Run 03 files)
 
-What this run must confirm:
-- I-02: Gemma's smoke test says OK, and its answers are not empty.
-- I-03: d03 answers with the IgM/IgG test from p. 40 and is not refused.
+Both fixes confirmed: Gemma answers in float32 (I-02), and d03 now gets p. 40 and answers with the IgM/IgG test (I-03).
+Retrieval is the same as Run 01 (recall@4 1.0, MRR 0.792, precision@4 0.333), since both models share it.
+
+| Model | GPU memory after load | In-scope answered | Out-of-scope refused | Refusal accuracy | Citation accuracy | Mean / median latency |
+|---|---|---|---|---|---|---|
+| Qwen3-8B (float16) | 7.79 GB | 12 of 12 | 3 of 3 | 1.000 | 25 of 25 cited pages given | 10.91 / 11.75 s |
+| Gemma 3 12B-IT (float32) | 11.28 GB | 12 of 12 | 3 of 3 | 1.000 | 18 of 20 cited pages given | 25.25 / 24.09 s |
+
+GPU memory includes 2.1 GB for BGE-M3. Citation accuracy counts the distinct pages an answer cites that were among its
+excerpts (`results/citation_check.csv`). Out-of-scope questions were refused before any LLM call (0.03 s).
+
+**How the two models answer.** Gemma repeats the guideline text almost word for word, with strength and certainty in
+the guideline's own format. It stays close to the excerpts, but it keeps the panel's "we recommend" (I-08) and twice
+cited a page it was not given (I-09). Qwen paraphrases, explains the recommendation, and cites every page correctly,
+but adds some uncited sentences (I-07) and once softened "suggests" into "recommends" (I-04). Qwen is about 2.3 times
+faster. Both mixed other groups' criteria into d11 (I-05), and both answered some Taglish questions in English (I-06).
+
+| id | Qwen3-8B | Gemma 3 12B-IT |
+|---|---|---|
+| d03 | IgM/IgG RDT, strong, low certainty (p. 40), plus an uncited rationale | guideline sentence word for word (p. 40) |
+| d08 | suggests against tawa-tawa, weak, very low (p. 90) | same content, cites p. 93 instead of p. 90 |
+| d09 | "recommends against" plant-based non-DEET (weak, low) | "we suggest against", weak, low (p. 102) |
+| d11 (Taglish) | answered in Filipino; adds pp. 59-60 criteria as DOH basis | answered in English; adds 2009 WHO criteria (p. 59) |
+| d12 (Taglish) | answered in English | answered in English |
+
+### Run 04: to decide
+
+Run 04 is needed only if the group changes the prompt for I-04 to I-08 (prompt v2). A member who did not write the
+unseen set reviews the Run 03 answers (`results/dev_*.csv`) and decides. If the prompt stays v1, Step 3 (final unseen
+run) comes next.
