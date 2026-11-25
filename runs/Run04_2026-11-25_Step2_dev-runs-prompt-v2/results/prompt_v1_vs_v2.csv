@@ -1,0 +1,10 @@
+measure,Qwen3-8B v1 (Run 03),Qwen3-8B v2 (Run 04),Gemma 3 12B v1 (Run 03),Gemma 3 12B v2 (Run 04),issue
+in-scope answered,12/12,12/12,12/12,12/12,
+out-of-scope refused,3/3,3/3,3/3,3/3,
+cited pages among the excerpts given,25/25,24/24,18/20,22/23,I-09
+sentences without a citation,12/44,4/32,7/31,2/31,I-07
+answers with "we recommend" or "we suggest",2,0,8,0,I-08
+guideline verb kept in the first sentence (7 recommendation questions),2/7,6/7,7/7,7/7,I-04
+recommendation answers stating certainty of evidence (of 9),7,6,6,4,I-10
+Taglish questions answered in Filipino or Taglish,1/2,0/2,0/2,0/2,I-06
+mean latency in s (all 15 questions),10.91,8.88,25.25,28.14,

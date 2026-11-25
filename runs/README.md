@@ -24,7 +24,8 @@ How to read this page:
 | [Run 01](#run-01-step-1-index-and-cutoff) | 2026-11-25 | 1. Index and cutoff | ✅ done | `c588cf7`, `43df3db` | first run | 151 chunks; dev recall@4 1.0, MRR 0.792; cutoff 0.61 | I-01 |
 | [Run 02](#run-02-step-2-dev-runs-attempt-1) | 2026-11-25 | 2. Dev runs | ❌ superseded | `43df3db` | both LLMs added (float16) | Qwen 11 of 12 in-scope answered; Gemma empty | I-02 to I-06 |
 | [Run 03](#run-03-step-2-dev-runs-attempt-2) | 2026-11-25 | 2. Dev runs | ✅ done | `dc574ee` (fixes from `5bb1978`) | cutoff as a gate; Gemma in float32 | both models: 12 of 12 in-scope answered, 3 of 3 refused; citation accuracy Qwen 25/25, Gemma 18/20 | I-07, I-08, I-09 |
-| [Run 04](#run-04-step-2-dev-runs-with-prompt-v2) | | 2. Dev runs | ⏳ next | `8cd9609` | **prompt v2** (approved by Jessica Dorosan); citation check built into the evaluation | | |
+| [Run 04](#run-04-step-2-dev-runs-with-prompt-v2) | 2026-11-25 | 2. Dev runs | ✅ done | `8cd9609` | **prompt v2** (approved by Jessica Dorosan); citation check built into the evaluation | no "we"; uncited sentences Qwen 12→4, Gemma 7→2; citation accuracy Qwen 24/24, Gemma 22/23; Taglish still English | I-10 |
+| Run 05 | | 2. Dev runs | 💭 to decide | | only if the group makes a prompt v3 (I-06, I-10) | | |
 
 ## Settings per run
 
@@ -52,14 +53,15 @@ new version number here.
 | I-01 | Run 01 | Retrieval | Cutoffs 0.59 to 0.62 tied and the lowest (0.59) was picked, 0.002 above an out-of-scope score | Take the middle of a tie (`43df3db`) | ✅ fixed in Run 01 |
 | I-02 | Run 02 | Model | Gemma 3 12B gave empty output in float16 on the T4 | Gemma in float32 (`5bb1978`) | ✅ confirmed in Run 03 |
 | I-03 | Run 02 | Retrieval | Cutoff applied to each chunk, so the answer chunk for d03 (p. 40, rank 3) never reached the LLM | Cutoff as a gate on the best chunk (`5bb1978`) | ✅ confirmed in Run 03 |
-| I-04 | Run 02 | Prompt | Qwen d09 says "recommends against" where the guideline says "suggests against" | Prompt v2 rule 4: keep the guideline's own verb | 🔁 check in Run 04 |
-| I-05 | Run 02 | Prompt | d11 lists admission criteria from other groups (pp. 59-60, 2009 WHO) next to the DOH criteria | Prompt v2 rule 5: other groups named or left out | 🔁 check in Run 04 |
-| I-06 | Run 02 | Prompt | Taglish questions answered in English (Qwen d12; Gemma d11 and d12) | Prompt v2 rule 8: Filipino or Taglish in, Filipino or Taglish out | 🔁 check in Run 04 |
-| I-07 | Run 03 | Prompt | Qwen adds sentences without a citation, some not in the excerpts (d03: why IgM/IgG works after day 5) | Prompt v2 rules 1-2: no own explanations, every sentence cited | 🔁 check in Run 04 |
-| I-08 | Run 03 | Prompt | Gemma copies the guideline's "we recommend", so the answer reads as Denguide's own recommendation | Prompt v2 rule 3: third person ("The CPG recommends") | 🔁 check in Run 04 |
-| I-09 | Run 03 | Model | Gemma cited 2 pages it was not given (d02 p. 33, d08 p. 93; the tawa-tawa recommendation is on p. 90) | Prompt v2 rule 2: cite only excerpt-label pages; citation accuracy now measured in every run | 🔁 check in Run 04 |
+| I-04 | Run 02 | Prompt | Qwen d09 says "recommends against" where the guideline says "suggests against" | Prompt v2 rule 4: keep the guideline's own verb | 🟡 Run 04: Qwen 2/7 → 6/7; d08 still "recommends against" |
+| I-05 | Run 02 | Prompt | d11 lists admission criteria from other groups (pp. 59-60, 2009 WHO) next to the DOH criteria | Prompt v2 rule 5: other groups named or left out | ✅ confirmed in Run 04 (WHO, PAHO, Malaysia named) |
+| I-06 | Run 02 | Prompt | Taglish questions answered in English (Qwen d12; Gemma d11 and d12) | Prompt v2 rule 8: Filipino or Taglish in, Filipino or Taglish out | ❌ not fixed in Run 04: 0/2 for both models (Qwen was 1/2 with v1) |
+| I-07 | Run 03 | Prompt | Qwen adds sentences without a citation, some not in the excerpts (d03: why IgM/IgG works after day 5) | Prompt v2 rules 1-2: no own explanations, every sentence cited | 🟡 Run 04: uncited sentences Qwen 12/44 → 4/32, Gemma 7/31 → 2/31 |
+| I-08 | Run 03 | Prompt | Gemma copies the guideline's "we recommend", so the answer reads as Denguide's own recommendation | Prompt v2 rule 3: third person ("The CPG recommends") | ✅ confirmed in Run 04 (0 answers with "we") |
+| I-09 | Run 03 | Model | Gemma cited 2 pages it was not given (d02 p. 33, d08 p. 93; the tawa-tawa recommendation is on p. 90) | Prompt v2 rule 2: cite only excerpt-label pages; citation accuracy now measured in every run | 🟡 Run 04: Gemma 18/20 → 22/23; the one left is "n = 93" (p. 96 table) read as p. 93 |
+| I-10 | Run 04 | Prompt | Strength and certainty left out more often with v2 (Gemma 6 → 4 of 9 recommendation answers, Qwen 7 → 6) | none yet | 🔍 open |
 
-Status key: ✅ fixed and confirmed · 🔁 fixed, waiting for the next run to confirm · 🔍 open.
+Status key: ✅ fixed and confirmed · 🟡 improved, not fully fixed · 🔁 fixed, waiting for the next run to confirm · ❌ change did not work · 🔍 open.
 Prompt issues are reviewed by a member who did not write the unseen set. Colab setup fixes (token handling,
 autoreload, git identity in the save cell) are in the git history and do not change results.
 
@@ -198,7 +200,9 @@ faster. Both mixed other groups' criteria into d11 (I-05), and both answered som
 
 ### Run 04: Step 2, dev runs with prompt v2
 
-**⏳ next** · code `8cd9609` · only the prompt changes from Run 03 (v1 to v2), so any difference in the answers comes from the prompt.
+**2026-11-25 · Colab T4 · ✅ done** · folder [`Run04_2026-11-25_Step2_dev-runs-prompt-v2`](Run04_2026-11-25_Step2_dev-runs-prompt-v2/) · [changes in this run](Run04_2026-11-25_Step2_dev-runs-prompt-v2/README.md) · code `8cd9609` · outputs commit `8903db0`
+
+Only the prompt changed from Run 03 (v1 to v2), so any difference in the answers comes from the prompt.
 
 Changes since Run 03:
 
@@ -207,11 +211,24 @@ Changes since Run 03:
 | `8cd9609` | Prompt v2: rules for I-04 to I-09 (approved by Jessica Dorosan) | **yes** |
 | `8cd9609` | Citation check built into `run_questions()` and `summarize()`; every result row records its prompt version | no (new measurement) |
 
-What this run must confirm, for both models:
-- Citation accuracy stays at or above Run 03 (Qwen 25/25, Gemma 18/20), with no cited page outside the excerpts (I-09).
-- No "we recommend" or "we suggest" in any answer (I-08).
-- d09 keeps "suggests against" (I-04); d11 names WHO or leaves its criteria out (I-05); d11 and d12 are answered in Filipino or Taglish (I-06).
-- No uncited sentences (I-07): `answers_without_citation` is 0 and every sentence ends with a citation.
-- Nothing gets worse: 12 of 12 in-scope answered, 3 of 3 refused, latency about the same.
+**Result against Run 03** (full table in [the Run 04 note](Run04_2026-11-25_Step2_dev-runs-prompt-v2/README.md) and `results/prompt_v1_vs_v2.csv`):
 
-If v2 does not beat v1 on these, the group keeps v1, and Run 04 stays in this log as a tested alternative.
+| Measure | Qwen v1 → v2 | Gemma v1 → v2 |
+|---|---|---|
+| In-scope answered / out-of-scope refused | 12/12, 3/3 → same | 12/12, 3/3 → same |
+| Cited pages among the excerpts given | 25/25 → 24/24 | 18/20 → 22/23 |
+| Sentences without a citation | 12/44 → 4/32 | 7/31 → 2/31 |
+| Answers with "we recommend / we suggest" | 2 → 0 | 8 → 0 |
+| Guideline verb kept (7 questions) | 2/7 → 6/7 | 7/7 → 7/7 |
+| Recommendation answers stating certainty (of 9) | 7 → 6 | 6 → 4 |
+| Taglish answered in Filipino or Taglish | 1/2 → 0/2 | 0/2 → 0/2 |
+| Mean latency (all 15) | 10.91 → 8.88 s | 25.25 → 28.14 s |
+
+Prompt v2 is better on five of the six target issues and keeps answering and refusing as before. It did not fix the
+language of Taglish answers (I-06), and certainty was left out a little more often (I-10). Gemma's one citation error
+comes from reading "n = 93" in a table as a page number.
+
+### Run 05: to decide
+
+Prompt v2 replaces v1 either way. A prompt v3 for I-06 and I-10 needs another review by Jessica Dorosan and one more
+dev run (Run 05). Without it, Step 3 (final unseen run) uses v2, and I-06 and I-10 go to the paper as limitations.
