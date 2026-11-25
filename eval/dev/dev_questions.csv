@@ -14,3 +14,28 @@ d12,taglish,Pwede bang bigyan ng papaya leaf extract ang dengue patient?,"Oo, su
 d13,out_of_scope,What is the paracetamol dose for a 20 kg child with dengue?,Not covered by the guideline.,,0
 d14,out_of_scope,Should colloids or crystalloids be used for dengue shock syndrome?,Not covered by the guideline.,,0
 d15,out_of_scope,What antibiotic should be given for leptospirosis?,Not covered by the guideline.,,0
+d16,recommendation,Should clinics use a combined NS1/IgM/IgG test kit to diagnose suspected dengue?,"Yes. The CPG recommends the combined dengue NS1/IgM/IgG RDT for suspected dengue (low certainty, strong recommendation).",40,1
+d17,numeric_table,What is the odds ratio of a low platelet count for severe dengue?,"OR 1.76 (95% CI 1.50-2.06), from 20 studies.",59,1
+d18,recommendation,Should acid suppressants be used to treat gastrointestinal bleeding in patients with dengue?,"No. The CPG recommends against acid suppressants for treating gastrointestinal bleeding or pain in dengue (very low certainty, strong recommendation).",84,1
+d19,prevention,Is IR3535 repellent recommended over DEET to prevent dengue?,"No. The CPG suggests against IR3535 over DEET repellents for dengue prevention (very low certainty, weak recommendation).",102,1
+d20,recommendation,Should a CBC be requested at the first visit of an outpatient with suspected dengue?,Yes. Good practice statement: request an initial CBC on the first visit to establish baseline hematocrit and platelet count.,64,1
+d21,recommendation,Who is the DOH dengue clinical practice guideline intended for?,Specialists and general practitioners who are primary care providers; it should not restrict clinical judgment.,ii;1,1
+d22,numeric_table,What is the sensitivity of the NS1 rapid test in secondary dengue infection?,"0.36 (95% CI 0.22-0.53), from 4 studies with 1,324 participants.",29,1
+d23,numeric_table,How sensitive is the combined NS1/IgM/IgG test in secondary dengue infection?,Sensitivity 0.85 (95% CI 0.75-0.91).,41,1
+d24,herbal,By how many days does Carica papaya shorten the hospital stay of dengue patients?,"Mean difference -1.50 days (95% CI -2.23 to -0.77), 5 RCTs (n = 749), with high heterogeneity; very low certainty.",93;95,1
+d25,numeric_table,How much shorter is the complete protection time of citronella repellents compared with DEET?,"Almost 3 hours less complete protection time (RR -2.84, 95% CI -3.91 to -1.77; 4 RCTs).",102;105,1
+d26,recommendation,How does oral hydration compare with intravenous hydration for length of hospital stay in dengue?,"One observational study suggests oral hydration may be as effective as intravenous hydration, with a hospital stay 2 days shorter; intravenous hydration may carry more fluid overload; low to very low certainty.",71,1
+d27,herbal,Does Carica papaya reduce the need for platelet transfusion in dengue?,"Those given Carica papaya were 36% less likely to need platelet transfusion for severe dengue (RR 0.64, 95% CI 0.41-0.99).",94,1
+d28,taglish,Useful pa ba ang NS1 test kung dati nang nagka-dengue ang pasyente?,"Less useful. NS1 RDT is most useful in patients with no previous dengue infection (low certainty, weak recommendation); its sensitivity in secondary infection is only 0.36.",26;29,1
+d29,taglish,Kailan pwedeng itigil ang CBC monitoring ng pasyenteng may dengue?,"Kapag nasa recovery phase na (pagtaas ng platelet count, 48 oras na walang lagnat, sapat na urine output, maayos na pakiramdam o gana); good practice statement.",64,1
+d30,taglish,Pwede bang bigyan ng dahon ng bayabas ang pasyenteng may dengue?,"Hindi. The CPG recommends against guava (Psidium guajava) preparations as a supplement due to lack of human trials (no evidence, strong recommendation).",90,1
+d31,taglish,Mas okay ba ang citronella na mosquito repellent kaysa sa DEET?,"Hindi. The CPG suggests against citronella over DEET repellents (very low certainty, weak recommendation).",102,1
+d32,taglish,Pwede bang bigyan ng omeprazole ang dengue patient na masakit ang tiyan?,"Hindi. The CPG recommends against acid suppressants (PPIs, H2 blockers) to prevent or treat abdominal pain or GI bleeding in dengue (very low certainty, strong recommendation).",79;84,1
+d33,out_of_scope,Can ibuprofen be given for fever in an adult with dengue?,Not covered by the guideline.,,0
+d34,out_of_scope,Should dexamethasone be given to patients with severe dengue?,Not covered by the guideline.,,0
+d35,out_of_scope,How often should a barangay conduct fogging to control dengue mosquitoes?,Not covered by the guideline.,,0
+d36,out_of_scope,Is vitamin C or zinc supplementation recommended for dengue patients?,Not covered by the guideline.,,0
+d37,out_of_scope,What is the antibiotic of choice for typhoid fever?,Not covered by the guideline.,,0
+d38,out_of_scope,How is the tourniquet test performed?,Not covered by the guideline.,,0
+d39,taglish,Pwede bang painumin ng ibuprofen ang batang may dengue para sa lagnat?,Not covered by the guideline.,,0
+d40,taglish,Effective ba ang lagundi o kamote tops para tumaas ang platelet ng may dengue?,Not covered by the guideline.,,0

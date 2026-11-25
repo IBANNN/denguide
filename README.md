@@ -22,7 +22,7 @@ denguide/
 ├── notebooks/
 │   └── Denguide_RAG_Group11.ipynb   Colab notebook (Sections 0-10 of the spec), latest run
 ├── eval/
-│   ├── dev/dev_questions.csv  15 development questions (tuning only)
+│   ├── dev/dev_questions.csv  40 development questions (tuning only; d16-d40 added for Run 05)
 │   └── unseen/                template only; the real unseen set stays private (see below)
 ├── data/raw/                  CPG Dengue 2023.pdf
 ├── tests/                     CPU tests with stand-in models

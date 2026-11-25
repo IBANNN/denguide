@@ -25,7 +25,7 @@ How to read this page:
 | [Run 02](#run-02-step-2-dev-runs-attempt-1) | 2026-11-25 | 2. Dev runs | ❌ superseded | `43df3db` | both LLMs added (float16) | Qwen 11 of 12 in-scope answered; Gemma empty | I-02 to I-06 |
 | [Run 03](#run-03-step-2-dev-runs-attempt-2) | 2026-11-25 | 2. Dev runs | ✅ done | `dc574ee` (fixes from `5bb1978`) | cutoff as a gate; Gemma in float32 | both models: 12 of 12 in-scope answered, 3 of 3 refused; citation accuracy Qwen 25/25, Gemma 18/20 | I-07, I-08, I-09 |
 | [Run 04](#run-04-step-2-dev-runs-with-prompt-v2) | 2026-11-25 | 2. Dev runs | ✅ done | `8cd9609` | **prompt v2** (approved by Jessica Dorosan); citation check built into the evaluation | no "we"; uncited sentences Qwen 12→4, Gemma 7→2; citation accuracy Qwen 24/24, Gemma 22/23; Taglish still English | I-10 |
-| Run 05 | | 2. Dev runs | 💭 to decide | | only if the group makes a prompt v3 (I-06, I-10) | | |
+| Run 05 | | Experiments | ⏳ next | | **dev set v2 (40 questions)**: retrieval baseline and cutoff re-tuned; then the Run 04 setup on all 40 | | |
 
 ## Settings per run
 
@@ -40,11 +40,34 @@ How to read this page:
 | Gemma 3 12B compute dtype | | float16 | **float32** | float32 |
 | Prompt | | v1 | v1 | **v2** |
 | Max new tokens / decoding | | 512 / greedy | 512 / greedy | 512 / greedy |
+| Dev set | v1 (15) | v1 (15) | v1 (15) | v1 (15) |
 
 Prompt v1 is `SYSTEM_PROMPT` in `src/rag.py` as of commit `6aa7cc7`. Prompt v2 (`PROMPT_VERSION = "v2"`) adds rules for
 I-04 to I-09. It was drafted from the Run 03 development answers and approved by Jessica Dorosan on 2026-11-25, a member
 who did not write the unseen set. From Run 04 on, every result row records its prompt version. Any prompt change gets a
 new version number here.
+
+## Dev set versions
+
+| Version | Questions | In scope / out of scope | Taglish | Used in |
+|---|---|---|---|---|
+| v1 | d01-d15 | 12 / 3 | 2 | Runs 01-04 |
+| v2 | d01-d40 | 29 / 11 | 9 (2 of them out of scope) | Run 05 on |
+
+**Why v2.** With 3 out-of-scope and 2 Taglish questions, v1 was too small to compare experiments: the cutoff gap rested
+on three questions, and one Taglish answer changed the Taglish rate by 50 points.
+
+**How d16-d40 were made.** Claude Code drafted them from the cleaned guideline text (`outputs/data/processed/`), in
+the categories of the unseen set. Claude Code never read the unseen questions. Checks before adding them:
+- every gold page was confirmed by finding the answer's key phrase on that page in the cleaned text and in the index;
+- the 8 out-of-scope topics (NSAIDs, corticosteroids, fogging, vitamin C/zinc, typhoid antibiotics, tourniquet test,
+  lagundi, kamote tops) have no mention in the index;
+- a script compared each draft with the 40 unseen questions and printed only similarity scores. Five drafts scored
+  too close (text similarity above 0.70 or word overlap above 0.50) and were replaced, without anyone reading which
+  unseen questions they matched. The kept questions score at most 0.68 and 0.40.
+
+d16-d40 still need a check against the PDF by Jessica Dorosan or Ricci Balugay (the course requires AI output to be
+validated). The first 15 questions are unchanged, so v1 results stay comparable on d01-d15.
 
 ## Issue tracker
 
@@ -228,7 +251,9 @@ Prompt v2 is better on five of the six target issues and keeps answering and ref
 language of Taglish answers (I-06), and certainty was left out a little more often (I-10). Gemma's one citation error
 comes from reading "n = 93" in a table as a page number.
 
-### Run 05: to decide
+### Run 05: experiments, baseline on dev set v2
 
-Prompt v2 replaces v1 either way. A prompt v3 for I-06 and I-10 needs another review by Jessica Dorosan and one more
-dev run (Run 05). Without it, Step 3 (final unseen run) uses v2, and I-06 and I-10 go to the paper as limitations.
+**⏳ next.** Prompt v2 stays. Before any experiment, Run 05 sets a baseline on the 40-question dev set: retrieval
+metrics and a re-tuned cutoff (11 out-of-scope questions instead of 3), then both models with the Run 04 setup.
+Planned experiments after it, one change per run: top-k, chunk size, a reranker, hybrid retrieval, and prompt v3 for
+I-06 and I-10. Step 3 (final unseen run) comes after the group freezes the settings.
