@@ -78,6 +78,7 @@ def tune_cutoff(table, grid=None):
     """
     Pick the similarity cutoff that best separates in-scope from out-of-scope questions
     using the top retrieval score. Run on the DEV set only.
+    When several cutoffs tie, take the middle one, so the margin is about equal on both sides.
     """
     grid = grid if grid is not None else np.round(np.arange(0.30, 0.80, 0.01), 2)
     rows = []
@@ -88,8 +89,10 @@ def tune_cutoff(table, grid=None):
                      "in_scope_kept": answered[table["in_scope"] == 1].mean(),
                      "out_scope_refused": (~answered)[table["in_scope"] == 0].mean()})
     curve = pd.DataFrame(rows)
-    best = curve.sort_values(["refusal_accuracy", "in_scope_kept"], ascending=False).iloc[0]
-    return float(best["cutoff"]), curve
+    tied = curve[curve["refusal_accuracy"] == curve["refusal_accuracy"].max()]
+    tied = tied[tied["in_scope_kept"] == tied["in_scope_kept"].max()]
+    best = tied["cutoff"].iloc[len(tied) // 2]      # middle of the tied range
+    return float(best), curve
 
 
 # ---------------------------------------------------------------- full runs
