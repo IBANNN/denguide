@@ -23,23 +23,26 @@ How to read this page:
 | [Run 01](#run-01-step-1-index-and-cutoff) | 2026-11-25 | 1. Index and cutoff | ✅ done | `c588cf7`, `43df3db` | first run | 151 chunks; dev recall@4 1.0, MRR 0.792; cutoff 0.61 | I-01 |
 | [Run 02](#run-02-step-2-dev-runs-attempt-1) | 2026-11-25 | 2. Dev runs | ❌ superseded | `43df3db` | both LLMs added (float16) | Qwen 11 of 12 in-scope answered; Gemma empty | I-02 to I-06 |
 | [Run 03](#run-03-step-2-dev-runs-attempt-2) | 2026-11-25 | 2. Dev runs | ✅ done | `dc574ee` (fixes from `5bb1978`) | cutoff as a gate; Gemma in float32 | both models: 12 of 12 in-scope answered, 3 of 3 refused; citation accuracy Qwen 25/25, Gemma 18/20 | I-07, I-08, I-09 |
-| Run 04 | | 2. Dev runs | 💭 to decide | | prompt v2, only if the group changes the prompt (I-04 to I-08) | | |
+| [Run 04](#run-04-step-2-dev-runs-with-prompt-v2) | | 2. Dev runs | ⏳ next | prompt v2 commit | **prompt v2** (approved by Jessica Dorosan); citation check built into the evaluation | | |
 
 ## Settings per run
 
-| Setting | Run 01 | Run 02 | Run 03 |
-|---|---|---|---|
-| Chunk size / overlap (words) | 350 / 50 | 350 / 50 | 350 / 50 |
-| Embedding model | BGE-M3 | BGE-M3 | BGE-M3 |
-| Top-k | 4 | 4 | 4 |
-| Similarity cutoff | 0.61 | 0.61 | 0.61 |
-| How the cutoff is applied | (retrieval only) | filter on each chunk | **gate on the best chunk** |
-| Qwen3-8B compute dtype | | float16 | float16 |
-| Gemma 3 12B compute dtype | | float16 | **float32** |
-| Prompt | | v1 | v1 |
-| Max new tokens / decoding | | 512 / greedy | 512 / greedy |
+| Setting | Run 01 | Run 02 | Run 03 | Run 04 |
+|---|---|---|---|---|
+| Chunk size / overlap (words) | 350 / 50 | 350 / 50 | 350 / 50 | 350 / 50 |
+| Embedding model | BGE-M3 | BGE-M3 | BGE-M3 | BGE-M3 |
+| Top-k | 4 | 4 | 4 | 4 |
+| Similarity cutoff | 0.61 | 0.61 | 0.61 | 0.61 |
+| How the cutoff is applied | (retrieval only) | filter on each chunk | **gate on the best chunk** | gate on the best chunk |
+| Qwen3-8B compute dtype | | float16 | float16 | float16 |
+| Gemma 3 12B compute dtype | | float16 | **float32** | float32 |
+| Prompt | | v1 | v1 | **v2** |
+| Max new tokens / decoding | | 512 / greedy | 512 / greedy | 512 / greedy |
 
-Prompt v1 is `SYSTEM_PROMPT` in `src/rag.py` as of commit `6aa7cc7`. Any prompt change gets a new version number here.
+Prompt v1 is `SYSTEM_PROMPT` in `src/rag.py` as of commit `6aa7cc7`. Prompt v2 (`PROMPT_VERSION = "v2"`) adds rules for
+I-04 to I-09. It was drafted from the Run 03 development answers and approved by Jessica Dorosan on 2026-11-25, a member
+who did not write the unseen set. From Run 04 on, every result row records its prompt version. Any prompt change gets a
+new version number here.
 
 ## Issue tracker
 
@@ -48,12 +51,12 @@ Prompt v1 is `SYSTEM_PROMPT` in `src/rag.py` as of commit `6aa7cc7`. Any prompt 
 | I-01 | Run 01 | Retrieval | Cutoffs 0.59 to 0.62 tied and the lowest (0.59) was picked, 0.002 above an out-of-scope score | Take the middle of a tie (`43df3db`) | ✅ fixed in Run 01 |
 | I-02 | Run 02 | Model | Gemma 3 12B gave empty output in float16 on the T4 | Gemma in float32 (`5bb1978`) | ✅ confirmed in Run 03 |
 | I-03 | Run 02 | Retrieval | Cutoff applied to each chunk, so the answer chunk for d03 (p. 40, rank 3) never reached the LLM | Cutoff as a gate on the best chunk (`5bb1978`) | ✅ confirmed in Run 03 |
-| I-04 | Run 02 | Prompt | Qwen d09 says "recommends against" where the guideline says "suggests against" | none yet | 🔍 open, still in Run 03 |
-| I-05 | Run 02 | Prompt | d11 lists admission criteria from other groups (pp. 59-60, 2009 WHO) next to the DOH criteria | none yet | 🔍 open, both models in Run 03 |
-| I-06 | Run 02 | Prompt | Taglish questions answered in English (Qwen d12; Gemma d11 and d12) | none yet | 🔍 open, both models in Run 03 |
-| I-07 | Run 03 | Prompt | Qwen adds sentences without a citation, some not in the excerpts (d03: why IgM/IgG works after day 5) | none yet | 🔍 open, teammate review |
-| I-08 | Run 03 | Prompt | Gemma copies the guideline's "we recommend", so the answer reads as Denguide's own recommendation | none yet | 🔍 open, teammate review |
-| I-09 | Run 03 | Model | Gemma cited 2 pages it was not given (d02 p. 33, d08 p. 93; the tawa-tawa recommendation is on p. 90) | none yet | 🔍 open, teammate review |
+| I-04 | Run 02 | Prompt | Qwen d09 says "recommends against" where the guideline says "suggests against" | Prompt v2 rule 4: keep the guideline's own verb | 🔁 check in Run 04 |
+| I-05 | Run 02 | Prompt | d11 lists admission criteria from other groups (pp. 59-60, 2009 WHO) next to the DOH criteria | Prompt v2 rule 5: other groups named or left out | 🔁 check in Run 04 |
+| I-06 | Run 02 | Prompt | Taglish questions answered in English (Qwen d12; Gemma d11 and d12) | Prompt v2 rule 8: Filipino or Taglish in, Filipino or Taglish out | 🔁 check in Run 04 |
+| I-07 | Run 03 | Prompt | Qwen adds sentences without a citation, some not in the excerpts (d03: why IgM/IgG works after day 5) | Prompt v2 rules 1-2: no own explanations, every sentence cited | 🔁 check in Run 04 |
+| I-08 | Run 03 | Prompt | Gemma copies the guideline's "we recommend", so the answer reads as Denguide's own recommendation | Prompt v2 rule 3: third person ("The CPG recommends") | 🔁 check in Run 04 |
+| I-09 | Run 03 | Model | Gemma cited 2 pages it was not given (d02 p. 33, d08 p. 93; the tawa-tawa recommendation is on p. 90) | Prompt v2 rule 2: cite only excerpt-label pages; citation accuracy now measured in every run | 🔁 check in Run 04 |
 
 Status key: ✅ fixed and confirmed · 🔁 fixed, waiting for the next run to confirm · 🔍 open.
 Prompt issues are reviewed by a member who did not write the unseen set. Colab setup fixes (token handling,
@@ -192,8 +195,15 @@ faster. Both mixed other groups' criteria into d11 (I-05), and both answered som
 | d11 (Taglish) | answered in Filipino; adds pp. 59-60 criteria as DOH basis | answered in English; adds 2009 WHO criteria (p. 59) |
 | d12 (Taglish) | answered in English | answered in English |
 
-### Run 04: to decide
+### Run 04: Step 2, dev runs with prompt v2
 
-Run 04 is needed only if the group changes the prompt for I-04 to I-08 (prompt v2). A member who did not write the
-unseen set reviews the Run 03 answers (`results/dev_*.csv`) and decides. If the prompt stays v1, Step 3 (final unseen
-run) comes next.
+**⏳ next** · only the prompt changes from Run 03 (v1 to v2), so any difference in the answers comes from the prompt.
+
+What this run must confirm, for both models:
+- Citation accuracy stays at or above Run 03 (Qwen 25/25, Gemma 18/20), with no cited page outside the excerpts (I-09).
+- No "we recommend" or "we suggest" in any answer (I-08).
+- d09 keeps "suggests against" (I-04); d11 names WHO or leaves its criteria out (I-05); d11 and d12 are answered in Filipino or Taglish (I-06).
+- No uncited sentences (I-07): `answers_without_citation` is 0 and every sentence ends with a citation.
+- Nothing gets worse: 12 of 12 in-scope answered, 3 of 3 refused, latency about the same.
+
+If v2 does not beat v1 on these, the group keeps v1, and Run 04 stays in this log as a tested alternative.

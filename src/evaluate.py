@@ -9,11 +9,13 @@ Question CSV columns
 Metrics
     Retrieval precision@k, recall@k (hit rate), MRR   - from gold_pages, before the cutoff
     Refusal accuracy                                  - out-of-scope refused, in-scope answered
+    Citation accuracy                                 - cited pages that were among the excerpts given
     Faithfulness                                      - optional Gemini judge on answered questions
     Latency                                           - seconds per question
 """
 import hashlib
 import json
+import re
 import time
 from pathlib import Path
 
@@ -21,6 +23,7 @@ import numpy as np
 import pandas as pd
 
 from .config import CONFIG
+from .rag import PROMPT_VERSION
 
 
 # ---------------------------------------------------------------- question files
@@ -41,6 +44,27 @@ def _gold(pages_str):
 
 def _hit_pages(hit):
     return {p.strip() for p in hit["pages"].split(",") if p.strip()}
+
+
+CITATION = re.compile(r"CPG p\.\s*([0-9ivx,;\s\-–]+(?:and\s+[0-9ivx]+)?)")
+
+
+def cited_pages(answer):
+    """Page numbers cited in an answer, e.g. "(CPG p. 26, 27)" or "(CPG p. 104-105)" -> {"26", "27", ...}."""
+    pages = set()
+    for m in CITATION.finditer(str(answer)):
+        for part in re.split(r"[,;\s]+|and", m.group(1)):
+            part = part.strip()
+            if re.fullmatch(r"\d+[-–]\d+", part):
+                start, end = map(int, re.split(r"[-–]", part))
+                pages |= {str(p) for p in range(start, end + 1)}
+            elif re.fullmatch(r"\d+|[ivx]+", part):
+                pages.add(part)
+    return pages
+
+
+def _sorted_pages(pages):
+    return ";".join(sorted(pages, key=lambda p: (len(p), p)))
 
 
 # ---------------------------------------------------------------- retrieval only
@@ -112,7 +136,13 @@ def run_questions(rag, questions, model_name, out_csv=None):
             "used_pages": " | ".join(h["pages"] for h in res["used"]),
             "relevant_flags": [bool(gold & _hit_pages(h)) for h in res["retrieved"]],
             "context": "\n\n".join(f"[p. {h['pages']}] {h['text']}" for h in res["used"]),
+            "prompt_version": PROMPT_VERSION,
         })
+        # Citation check: every cited page should be one of the pages the LLM was given.
+        given = set().union(*[_hit_pages(h) for h in res["used"]])
+        cited = set() if res["refused"] else cited_pages(res["answer"])
+        rows[-1].update(pages_given=_sorted_pages(given), pages_cited=_sorted_pages(cited),
+                        cited_not_given=_sorted_pages(cited - given))
         print(f"{q.id:>6} | {res['latency_s']:>5}s | refused={res['refused']} | {res['answer'][:70]!r}")
     df = pd.DataFrame(rows)
     if out_csv:
@@ -130,8 +160,21 @@ def refusal_metrics(df):
             "in_scope_wrongly_refused": round(ins["refused"].mean(), 3) if len(ins) else None}
 
 
+def citation_metrics(df):
+    """Citation accuracy over answered questions: cited pages that were among the excerpts given."""
+    if "pages_cited" not in df:
+        return {}
+    answered = df[~df["refused"] & df["error"].isna()]
+    split = lambda s: [p for p in str(s).split(";") if p and p != "nan"]
+    n_cited = answered["pages_cited"].apply(lambda s: len(split(s)))
+    n_outside = answered["cited_not_given"].apply(lambda s: len(split(s)))
+    total = int(n_cited.sum())
+    return {"citation_accuracy": round(1 - n_outside.sum() / total, 3) if total else None,
+            "answers_without_citation": int((n_cited == 0).sum())}
+
+
 def latency_metrics(df):
-    lat = df.loc[df["error"].isna(), "latency_s"]
+    lat =df.loc[df["error"].isna(), "latency_s"]
     return {"latency_mean_s": round(lat.mean(), 2), "latency_median_s": round(lat.median(), 2)}
 
 
@@ -195,6 +238,7 @@ def summarize(run_dfs):
         row = {"model": name}
         row.update(retrieval_metrics(df))
         row.update(refusal_metrics(df))
+        row.update(citation_metrics(df))
         if "faithfulness" in df:
             row["faithfulness_mean"] = round(df["faithfulness"].mean(), 3)
         if "correctness" in df:
