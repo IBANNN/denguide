@@ -1,0 +1,23 @@
+# Retrieval and indexing
+llama-index-core
+llama-index-vector-stores-chroma
+llama-index-embeddings-huggingface
+chromadb
+pymupdf
+
+# LLMs (GPU, used on Colab)
+torch
+transformers
+accelerate
+bitsandbytes
+
+# Evaluation, judge, app
+pandas
+numpy
+matplotlib
+google-genai
+streamlit
+
+# Tests
+pytest
+scikit-learn

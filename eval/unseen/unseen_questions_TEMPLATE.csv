@@ -1,0 +1,3 @@
+id,type,question,reference_answer,gold_pages,in_scope
+u01,recommendation,<write a clinician question here>,<answer from the CPG>,"<printed page(s), e.g. 71;72>",1
+u02,out_of_scope,<question the CPG does not answer>,Not covered by the guideline.,,0

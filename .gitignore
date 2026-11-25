@@ -1,0 +1,22 @@
+# Generated outputs live in the work folder (Drive on Colab), not in git
+workspace/
+chroma_db/
+results/
+logs/
+data/processed/
+
+# Private unseen test set (commit only after the final run)
+eval/unseen/unseen_questions.csv
+
+# Python and notebooks
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+venv/
+
+# Secrets
+.env
+*.key
+.streamlit/secrets.toml

@@ -1,0 +1,16 @@
+id,type,question,reference_answer,gold_pages,in_scope
+d01,recommendation,Is the NS1 rapid diagnostic test recommended for patients with suspected dengue?,"Yes. NS1 RDT is recommended for suspected dengue (low certainty, strong recommendation); most useful within 3 days of symptom onset and in patients with no prior dengue.",26,1
+d02,numeric_table,What is the pooled sensitivity and specificity of NS1 rapid diagnostic tests?,Pooled sensitivity 0.70 (95% CI 0.56-0.81); pooled specificity 0.96 (95% CI 0.93-0.98).,26;31,1
+d03,recommendation,Which rapid test is recommended for a patient who consults more than 5 days after symptom onset?,"An RDT with dengue IgM/IgG antibodies (low certainty, strong recommendation).",40,1
+d04,recommendation,What clinical signs indicate that a dengue patient needs in-hospital management?,"Any one of: vomiting, abdominal pain/tenderness, lethargy/restlessness, mucosal bleeding, impaired consciousness, hepatomegaly, acute renal failure; or comorbidities such as pregnancy, obesity, cardiac/renal/hematologic/pulmonary disease (very low certainty, strong).",52,1
+d05,recommendation,Should daily CBC be done for outpatients with dengue?,Good practice statement: initial CBC at first visit; daily CBC may be done as part of monitoring; stop when in recovery phase.,64,1
+d06,recommendation,Should ORS be given to patients with probable dengue?,"Yes. ORS is recommended for probable or confirmed dengue to prevent poor outcomes (very low certainty, strong).",71,1
+d07,recommendation,Are acid suppressants recommended to prevent gastrointestinal bleeding in dengue?,"No. Recommended against for prevention of GI bleeding or abdominal pain (very low certainty, strong).",79,1
+d08,herbal,Is tawa-tawa recommended for patients with confirmed dengue?,"No. The guideline suggests against tawa-tawa (Euphorbia hirta) as a supplement due to insufficient evidence (very low certainty, weak).",90,1
+d09,prevention,Are non-DEET plant-based repellents recommended over DEET to prevent dengue?,"No. The guideline suggests against plant-based non-DEET extracts over DEET (low certainty, weak).",102,1
+d10,numeric_table,How many dengue cases and deaths were reported in the Philippines in 2022?,"224,477 cases and 729 deaths (case fatality rate 0.3%).",27,1
+d11,taglish,Kailan dapat i-admit sa ospital ang pasyenteng may dengue?,"Kapag may alinman sa clinical signs (vomiting, abdominal pain, lethargy, mucosal bleeding, etc.) o comorbidities gaya ng pregnancy o obesity.",52,1
+d12,taglish,Pwede bang bigyan ng papaya leaf extract ang dengue patient?,"Oo, suggested as supplement to standard therapy for confirmed dengue (very low certainty, weak).",90,1
+d13,out_of_scope,What is the paracetamol dose for a 20 kg child with dengue?,Not covered by the guideline.,,0
+d14,out_of_scope,Should colloids or crystalloids be used for dengue shock syndrome?,Not covered by the guideline.,,0
+d15,out_of_scope,What antibiotic should be given for leptospirosis?,Not covered by the guideline.,,0
