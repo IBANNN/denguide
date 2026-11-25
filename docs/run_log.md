@@ -6,6 +6,7 @@ and its output files in `outputs/`. Numbers here are copied from the notebook ou
 | Step | Date | Notebook copy | Outputs commit |
 |---|---|---|---|
 | 1. Index and cutoff | 2026-11-25 | [2026-11-25_Step1_index_and_cutoff.ipynb](../notebooks/runs/2026-11-25_Step1_index_and_cutoff.ipynb) | `06113ae` |
+| 2. Dev runs, attempt 1 (superseded) | 2026-11-25 | not saved | `81aa305`, files in `outputs/attempts/2026-11-25_Step2_attempt1/` |
 
 ---
 
@@ -92,3 +93,32 @@ Saved in `outputs/settings_override.json`; chart in `outputs/results/cutoff_tuni
 Gold pages were converted from PDF to printed page numbers before any tuning. The file stays on Drive only.
 
 SHA-256 `e7baf3a48cb94f559d4467fc75410836f546c7c23ed2ac9eaeb400bb1ae88c11`, recorded 2026-11-25.
+
+---
+
+## Step 2, attempt 1: dev runs of both LLMs (2026-11-25, superseded)
+
+**Setup.** Same Colab T4 session as Step 1. Code at commit `c588cf7` with the cutoff fix from `43df3db`; cutoff 0.61.
+Both models in 4-bit NF4 with float16 compute. Result files: `outputs/attempts/2026-11-25_Step2_attempt1/`.
+
+| Model | GPU memory after load | Smoke test | In-scope answered | Out-of-scope refused | Mean latency |
+|---|---|---|---|---|---|
+| Qwen3-8B | 7.79 GB (incl. 2.1 GB BGE-M3) | OK | 11 of 12 | 3 of 3 | 11.06 s |
+| Gemma 3 12B-IT | 9.39 GB (incl. 2.1 GB BGE-M3) | empty reply | 0 of 12 (empty output) | 3 of 3 | 54.2 s |
+
+**Problem 1: Gemma 3 gave empty output in float16.** Every reply was empty and each one ran to the 512-token limit
+(about 67 s). Gemma 3 was trained in bfloat16, and the T4 has no native bfloat16. Float16 overflow is the likely cause.
+**Change:** Gemma runs with float32 compute (`CONFIG["compute_dtype"]`, commit `5bb1978`).
+
+**Problem 2: the cutoff removed a needed chunk (d03).** The cutoff was tuned on the top retrieval score only, but the
+code applied it to each chunk. For d03 ("Which rapid test is recommended for a patient who consults more than 5 days
+after symptom onset?") the recommendation on p. 40 ranked third with a score below 0.61, so only pp. 33-34 and 26 reached
+the LLM. Qwen3-8B said IgM "may be considered" and then gave the refusal sentence.
+**Change:** the cutoff became a gate on the best chunk. When the best chunk passes, all four chunks go to the LLM
+(`DenguideRAG.relevant()`, commit `5bb1978`). Out-of-scope questions still get the refusal without an LLM call.
+
+**Qwen3-8B answer notes (other 11 in-scope questions).** Facts matched the guideline on every question checked
+(d01, d02, d04, d06, d07, d08, d10, d12). Points for review:
+- d09 says "recommends against" where the guideline says "suggests against" (weak recommendation is still stated).
+- d11 lists admission criteria from pp. 59-60 next to the DOH criteria without naming the other source.
+- d12 is a Taglish question answered in English.
