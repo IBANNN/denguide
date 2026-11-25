@@ -4,6 +4,7 @@ Every Colab run gets a number, failed runs included. Each run has its own folder
 
 ```
 runs/RunNN_<date>_<step>_<short name>/
+├── README.md          what changed since the previous run, why, the commits, and what the change did
 ├── notebook.ipynb     the notebook as it was after the run (when it was downloaded)
 └── results/           the result files of that run (CSVs, charts, settings)
 ```
@@ -23,7 +24,7 @@ How to read this page:
 | [Run 01](#run-01-step-1-index-and-cutoff) | 2026-11-25 | 1. Index and cutoff | ✅ done | `c588cf7`, `43df3db` | first run | 151 chunks; dev recall@4 1.0, MRR 0.792; cutoff 0.61 | I-01 |
 | [Run 02](#run-02-step-2-dev-runs-attempt-1) | 2026-11-25 | 2. Dev runs | ❌ superseded | `43df3db` | both LLMs added (float16) | Qwen 11 of 12 in-scope answered; Gemma empty | I-02 to I-06 |
 | [Run 03](#run-03-step-2-dev-runs-attempt-2) | 2026-11-25 | 2. Dev runs | ✅ done | `dc574ee` (fixes from `5bb1978`) | cutoff as a gate; Gemma in float32 | both models: 12 of 12 in-scope answered, 3 of 3 refused; citation accuracy Qwen 25/25, Gemma 18/20 | I-07, I-08, I-09 |
-| [Run 04](#run-04-step-2-dev-runs-with-prompt-v2) | | 2. Dev runs | ⏳ next | prompt v2 commit | **prompt v2** (approved by Jessica Dorosan); citation check built into the evaluation | | |
+| [Run 04](#run-04-step-2-dev-runs-with-prompt-v2) | | 2. Dev runs | ⏳ next | `8cd9609` | **prompt v2** (approved by Jessica Dorosan); citation check built into the evaluation | | |
 
 ## Settings per run
 
@@ -68,7 +69,7 @@ autoreload, git identity in the save cell) are in the git history and do not cha
 
 ### Run 01: Step 1, index and cutoff
 
-**2026-11-25 · Colab T4 · ✅ done** · folder [`Run01_2026-11-25_Step1_index-and-cutoff`](Run01_2026-11-25_Step1_index-and-cutoff/) · outputs commit `06113ae`
+**2026-11-25 · Colab T4 · ✅ done** · folder [`Run01_2026-11-25_Step1_index-and-cutoff`](Run01_2026-11-25_Step1_index-and-cutoff/) · [changes in this run](Run01_2026-11-25_Step1_index-and-cutoff/README.md) · outputs commit `06113ae`
 
 | Library | Version |
 |---|---|
@@ -145,7 +146,7 @@ The file stays on Drive only. SHA-256 `e7baf3a48cb94f559d4467fc75410836f546c7c23
 
 ### Run 02: Step 2, dev runs, attempt 1
 
-**2026-11-25 · Colab T4 · ❌ superseded by Run 03** · folder [`Run02_2026-11-25_Step2_dev-runs-attempt1`](Run02_2026-11-25_Step2_dev-runs-attempt1/) · outputs commit `81aa305` · notebook saved (downloaded before the Run 03 restart)
+**2026-11-25 · Colab T4 · ❌ superseded by Run 03** · folder [`Run02_2026-11-25_Step2_dev-runs-attempt1`](Run02_2026-11-25_Step2_dev-runs-attempt1/) · [changes in this run](Run02_2026-11-25_Step2_dev-runs-attempt1/README.md) · outputs commit `81aa305` · notebook saved (downloaded before the Run 03 restart)
 
 | Model | GPU memory after load | Smoke test | In-scope answered | Out-of-scope refused | Mean latency |
 |---|---|---|---|---|---|
@@ -167,7 +168,7 @@ d04, d06, d07, d08, d10, d12). Open points: I-04 (d09 wording), I-05 (d11 attrib
 
 ### Run 03: Step 2, dev runs, attempt 2
 
-**2026-11-25 · Colab T4 · ✅ done** · folder [`Run03_2026-11-25_Step2_dev-runs-attempt2`](Run03_2026-11-25_Step2_dev-runs-attempt2/) · code `dc574ee`
+**2026-11-25 · Colab T4 · ✅ done** · folder [`Run03_2026-11-25_Step2_dev-runs-attempt2`](Run03_2026-11-25_Step2_dev-runs-attempt2/) · [changes in this run](Run03_2026-11-25_Step2_dev-runs-attempt2/README.md) · code `dc574ee`
 · outputs commit `12421aa` (its message says "Step 2a…" by mistake; it holds the Run 03 files)
 
 Both fixes confirmed: Gemma answers in float32 (I-02), and d03 now gets p. 40 and answers with the IgM/IgG test (I-03).
@@ -197,7 +198,14 @@ faster. Both mixed other groups' criteria into d11 (I-05), and both answered som
 
 ### Run 04: Step 2, dev runs with prompt v2
 
-**⏳ next** · only the prompt changes from Run 03 (v1 to v2), so any difference in the answers comes from the prompt.
+**⏳ next** · code `8cd9609` · only the prompt changes from Run 03 (v1 to v2), so any difference in the answers comes from the prompt.
+
+Changes since Run 03:
+
+| Commit | Change | Changes results? |
+|---|---|---|
+| `8cd9609` | Prompt v2: rules for I-04 to I-09 (approved by Jessica Dorosan) | **yes** |
+| `8cd9609` | Citation check built into `run_questions()` and `summarize()`; every result row records its prompt version | no (new measurement) |
 
 What this run must confirm, for both models:
 - Citation accuracy stays at or above Run 03 (Qwen 25/25, Gemma 18/20), with no cited page outside the excerpts (I-09).
