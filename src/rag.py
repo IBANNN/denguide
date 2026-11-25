@@ -78,7 +78,13 @@ class DenguideRAG:
         return sorted(hits, key=lambda h: h["score"], reverse=True)
 
     def relevant(self, hits):
-        return [h for h in hits if h["score"] >= self.cutoff]
+        """
+        The cutoff is a gate on the best hit, the same score tune_cutoff() uses.
+        If the best hit passes, the LLM gets all top-k hits; a lower-ranked chunk can hold the answer.
+        """
+        if hits and hits[0]["score"] >= self.cutoff:
+            return hits
+        return []
 
     # ------------------------------------------------------------ full answer
     def answer(self, question):

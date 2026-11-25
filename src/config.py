@@ -64,7 +64,8 @@ CONFIG = {
     },
     # Number format for 4-bit compute. "auto" = bfloat16 on GPUs that support it (L4, A100),
     # float16 on the T4. If Gemma gives empty or garbled text on a T4, set its value to "float32".
-    "compute_dtype": {"Qwen3-8B": "auto", "Gemma 3 12B": "auto"},
+    # Gemma 3 gave empty output in float16 on the T4 (Step 2, 2026-11-25), so it runs in float32.
+    "compute_dtype": {"Qwen3-8B": "auto", "Gemma 3 12B": "float32"},
     "max_new_tokens": 512,
     "do_sample": False,          # greedy decoding = same answer every run
 
