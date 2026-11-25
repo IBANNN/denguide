@@ -20,13 +20,14 @@ denguide/
 │   ├── rag.py                 retrieval, cutoff, grounded prompt, refusal
 │   └── evaluate.py            metrics, cutoff tuning, judge, blind ratings
 ├── notebooks/
-│   └── Denguide_RAG_Group11.ipynb   Colab notebook (Sections 0-10 of the spec)
+│   ├── Denguide_RAG_Group11.ipynb   Colab notebook (Sections 0-10 of the spec), latest run
+│   └── runs/                  dated copy of the notebook after each step's run
 ├── eval/
 │   ├── dev/dev_questions.csv  15 development questions (tuning only)
 │   └── unseen/                template only; the real unseen set stays private (see below)
 ├── data/raw/                  CPG Dengue 2023.pdf
 ├── tests/                     CPU tests with stand-in models
-├── docs/                      progress report, model rationale, progress deck
+├── docs/                      progress report, model rationale, progress deck, run_log.md (results per step)
 └── outputs/                   copy of the Drive work folder, pushed from Colab (chunks, index, results, logs)
 ```
 
@@ -75,7 +76,7 @@ The LLMs and BGE-M3 need a GPU for reasonable speed, so model runs happen on Col
 - [x] Topic, users, knowledge base, model selection (see `docs/`)
 - [x] Cleaning and chunking (114 of 211 pages kept, 53 tables rebuilt, 151 chunks)
 - [x] Code for indexing, RAG, evaluation and app (tested with stand-ins)
-- [ ] Step 1: unseen set written and hashed; Colab setup; BGE-M3 index; cutoff tuned on dev set
+- [x] Step 1: unseen set written and hashed; Colab setup; BGE-M3 index; cutoff tuned on dev set (0.61, see `docs/run_log.md`)
 - [ ] Step 2: practice runs of Qwen3-8B and Gemma 3 12B
 - [ ] Step 3: freeze settings; final unseen run, both models
 - [ ] Step 4: judge, blind ratings, charts, app screenshots, consultation
