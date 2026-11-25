@@ -15,6 +15,7 @@ Metrics
 import hashlib
 import json
 import time
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -210,26 +211,38 @@ def load_results(path):
     return df
 
 
-def export_rating_sheet(run_dfs, path):
-    """One sheet for two raters to score correctness (1 = wrong, 5 = fully correct) without seeing the model name."""
+def export_rating_sheet(run_dfs, path, overwrite=False):
+    """
+    One sheet for two raters to score correctness (1 = wrong, 5 = fully correct) without seeing the model name.
+    Each answer gets a row code (R001, R002, ...). The key file links row codes to models,
+    so raters may sort or filter the sheet. An existing sheet is kept unless overwrite=True,
+    since it may already hold ratings.
+    """
+    path = Path(path)
+    if path.exists() and not overwrite:
+        raise FileExistsError(f"{path} already exists and may hold ratings. "
+                              "Use overwrite=True only to start the ratings again.")
     rows = []
     for name, df in run_dfs.items():
         part = df[["id", "question", "reference_answer", "answer"]].copy()
         part["model"] = name
         rows.append(part)
     sheet = pd.concat(rows).sample(frac=1, random_state=CONFIG["seed"]).reset_index(drop=True)
+    sheet.insert(0, "row", [f"R{i:03d}" for i in range(1, len(sheet) + 1)])
     sheet["rater1_1to5"] = ""
     sheet["rater2_1to5"] = ""
     sheet.drop(columns="model").to_csv(path, index=False)          # blind copy for raters
-    sheet[["id", "model"]].to_csv(str(path).replace(".csv", "_key.csv"), index=False)
+    sheet[["row", "id", "model"]].to_csv(path.with_name(path.stem + "_key.csv"), index=False)
     return sheet
 
 
 def attach_ratings(df, model_name, rated_path):
     """Average the two raters' scores and add a 'correctness' column to one model's results."""
-    rated = pd.read_csv(rated_path, dtype={"id": str})
-    key = pd.read_csv(str(rated_path).replace(".csv", "_key.csv"), dtype={"id": str})
-    rated = rated.reset_index(drop=True).join(key["model"])
-    rated = rated[rated["model"] == model_name]
+    rated_path = Path(rated_path)
+    rated = pd.read_csv(rated_path, dtype={"id": str, "row": str})
+    key = pd.read_csv(rated_path.with_name(rated_path.stem + "_key.csv"), dtype={"id": str, "row": str})
+    rated = rated.merge(key[["row", "model"]], on="row", how="left")   # match by row code, not row order
+    rated = rated[rated["model"] == model_name].copy()
     rated["correctness"] = rated[["rater1_1to5", "rater2_1to5"]].astype(float).mean(axis=1)
-    return df.merge(rated[["id", "correctness"]], on="id", how="left")
+    # Drop an older correctness column so the cell can be run again safely.
+    return df.drop(columns="correctness", errors="ignore").merge(rated[["id", "correctness"]], on="id", how="left")

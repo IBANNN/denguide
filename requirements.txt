@@ -7,7 +7,7 @@ pymupdf
 
 # LLMs (GPU, used on Colab)
 torch
-transformers
+transformers>=4.56      # src/llm.py passes dtype= (older versions only accept torch_dtype=)
 accelerate
 bitsandbytes
 
