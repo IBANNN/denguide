@@ -26,11 +26,14 @@ denguide/
 │   └── unseen/                template only; the real unseen set stays private (see below)
 ├── data/raw/                  CPG Dengue 2023.pdf
 ├── tests/                     CPU tests with stand-in models
-└── docs/                      progress report, model rationale, progress deck
+├── docs/                      progress report, model rationale, progress deck
+└── outputs/                   copy of the Drive work folder, pushed from Colab (chunks, index, results, logs)
 ```
 
-Generated files (chunks, Chroma database, results, logs) go to the **work folder**, never to git:
-Google Drive on Colab, or `workspace/` locally. Set it with the `DENGUIDE_DIR` environment variable.
+Generated files (chunks, Chroma database, results, logs) go to the **work folder**: Google Drive on Colab,
+or `workspace/` locally. Set it with the `DENGUIDE_DIR` environment variable. At the end of each Colab session,
+`save_to_github()` in the notebook copies the Drive folder to `outputs/` in this repo and pushes it.
+The unseen question set stays out of `outputs/` until the final run.
 
 ## How we work
 
@@ -38,16 +41,18 @@ Google Drive on Colab, or `workspace/` locally. Set it with the `DENGUIDE_DIR` e
 |---|---|
 | **Claude Code / VS Code (laptop)** | Edit code, run `python -m pytest -q`, commit and push |
 | **GitHub** | Single source of truth; issues, milestones and pull requests |
-| **Google Colab (T4 GPU)** | Pull the latest code, build the index, run the LLMs, save results to Drive |
+| **Google Colab (T4 GPU)** | Pull the latest code, build the index, run the LLMs, save results to Drive, push them to `outputs/` |
 
 Branch per task (`step1-index`, `step2-qwen-dev`, ...), open a pull request, and have one other member review it.
 
 ## Running on Colab
 
 1. Runtime > Change runtime type > **T4 GPU**.
-2. Colab Secrets: `HF_TOKEN` (Hugging Face read token), `GITHUB_TOKEN` (fine-grained token with read access to this repo), optional `GEMINI_API_KEY` (judge).
+2. Colab Secrets: `HF_TOKEN` (Hugging Face read token), `GITHUB_TOKEN` (fine-grained token for this repo with Contents: Read and write), optional `GEMINI_API_KEY` (judge).
 3. Accept the Gemma license at https://huggingface.co/google/gemma-3-12b-it with the same Hugging Face account.
 4. Open `notebooks/Denguide_RAG_Group11.ipynb` in Colab (File > Open notebook > GitHub) and run from the top.
+5. End of session: set `GITHUB_USER` in Section 0.2 to your username and run the last cell (`save_to_github`).
+   Save the notebook with File > Save a copy in GitHub.
 
 ## Running locally (CPU, no LLM)
 
@@ -63,7 +68,7 @@ The LLMs and BGE-M3 need a GPU for reasonable speed, so model runs happen on Col
 - One member writes about 40 questions from the guideline **before any tuning**.
 - The file lives only in the private Drive work folder (`eval/unseen/unseen_questions.csv`), not in this repo.
 - Its SHA-256 hash is recorded in the progress report. The notebook checks the hash before the final run.
-- It is committed here only after the final run.
+- It is committed here only after the final run (`FINAL_RUN_DONE = True` in the notebook).
 
 ## Status
 

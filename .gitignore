@@ -1,12 +1,9 @@
-# Generated outputs live in the work folder (Drive on Colab), not in git
+# Local test outputs. Colab outputs reach git through save_to_github() in the notebook (outputs/).
 workspace/
-chroma_db/
-results/
-logs/
-data/processed/
 
-# Private unseen test set (commit only after the final run)
+# Private unseen test set. save_to_github() adds it on purpose after the final run.
 eval/unseen/unseen_questions.csv
+outputs/eval/unseen/unseen_questions.csv
 
 # Python and notebooks
 __pycache__/
