@@ -25,22 +25,24 @@ How to read this page:
 | [Run 02](#run-02-step-2-dev-runs-attempt-1) | 2026-11-25 | 2. Dev runs | ❌ superseded | `43df3db` | both LLMs added (float16) | Qwen 11 of 12 in-scope answered; Gemma empty | I-02 to I-06 |
 | [Run 03](#run-03-step-2-dev-runs-attempt-2) | 2026-11-25 | 2. Dev runs | ✅ done | `dc574ee` (fixes from `5bb1978`) | cutoff as a gate; Gemma in float32 | both models: 12 of 12 in-scope answered, 3 of 3 refused; citation accuracy Qwen 25/25, Gemma 18/20 | I-07, I-08, I-09 |
 | [Run 04](#run-04-step-2-dev-runs-with-prompt-v2) | 2026-11-25 | 2. Dev runs | ✅ done | `8cd9609` | **prompt v2** (approved by Jessica Dorosan); citation check built into the evaluation | no "we"; uncited sentences Qwen 12→4, Gemma 7→2; citation accuracy Qwen 24/24, Gemma 22/23; Taglish still English | I-10 |
-| Run 05 | | Experiments | ⏳ next | | **dev set v2 (40 questions)**: retrieval baseline and cutoff re-tuned; then the Run 04 setup on all 40 | | |
+| [Run 05](#run-05-baseline-on-dev-set-v2-attempt-1) | 2026-11-25 | Experiments | ❌ failed | `5709f88` | **dev set v2 (40 questions)** | retrieval recall@4 0.931, MRR 0.759; cutoff 0.61 no longer separates; Qwen complete (refusal 0.975); Gemma out of GPU memory at d16 | I-11, I-12, I-13 |
+| Run 06 | | Experiments | ⏳ next | | **BGE-M3 on the CPU during LLM runs**; d17 and d22 labels corrected | | |
 
 ## Settings per run
 
-| Setting | Run 01 | Run 02 | Run 03 | Run 04 |
-|---|---|---|---|---|
-| Chunk size / overlap (words) | 350 / 50 | 350 / 50 | 350 / 50 | 350 / 50 |
-| Embedding model | BGE-M3 | BGE-M3 | BGE-M3 | BGE-M3 |
-| Top-k | 4 | 4 | 4 | 4 |
-| Similarity cutoff | 0.61 | 0.61 | 0.61 | 0.61 |
-| How the cutoff is applied | (retrieval only) | filter on each chunk | **gate on the best chunk** | gate on the best chunk |
-| Qwen3-8B compute dtype | | float16 | float16 | float16 |
-| Gemma 3 12B compute dtype | | float16 | **float32** | float32 |
-| Prompt | | v1 | v1 | **v2** |
-| Max new tokens / decoding | | 512 / greedy | 512 / greedy | 512 / greedy |
-| Dev set | v1 (15) | v1 (15) | v1 (15) | v1 (15) |
+| Setting | Run 01 | Run 02 | Run 03 | Run 04 | Run 05 | Run 06 |
+|---|---|---|---|---|---|---|
+| Chunk size / overlap (words) | 350 / 50 | 350 / 50 | 350 / 50 | 350 / 50 | 350 / 50 | 350 / 50 |
+| Embedding model | BGE-M3 | BGE-M3 | BGE-M3 | BGE-M3 | BGE-M3 | BGE-M3 |
+| Top-k | 4 | 4 | 4 | 4 | 4 | 4 |
+| Similarity cutoff | 0.61 | 0.61 | 0.61 | 0.61 | 0.61 (re-tuned) | re-tuned |
+| How the cutoff is applied | (retrieval only) | filter on each chunk | **gate on the best chunk** | gate on the best chunk | gate | gate |
+| Qwen3-8B compute dtype | | float16 | float16 | float16 | float16 | float16 |
+| Gemma 3 12B compute dtype | | float16 | **float32** | float32 | float32 | float32 |
+| Prompt | | v1 | v1 | **v2** | v2 | v2 |
+| Max new tokens / decoding | | 512 / greedy | 512 / greedy | 512 / greedy | 512 / greedy | 512 / greedy |
+| BGE-M3 device during LLM runs | | GPU | GPU | GPU | GPU | **CPU** |
+| Dev set | v1 (15) | v1 (15) | v1 (15) | v1 (15) | **v2 (40)** | v2 (40), d17/d22 fixed |
 
 Prompt v1 is `SYSTEM_PROMPT` in `src/rag.py` as of commit `6aa7cc7`. Prompt v2 (`PROMPT_VERSION = "v2"`) adds rules for
 I-04 to I-09. It was drafted from the Run 03 development answers and approved by Jessica Dorosan on 2026-11-25, a member
@@ -69,6 +71,10 @@ the categories of the unseen set. Claude Code never read the unseen questions. C
 d16-d40 still need a check against the PDF by Jessica Dorosan or Ricci Balugay (the course requires AI output to be
 validated). The first 15 questions are unchanged, so v1 results stay comparable on d01-d15.
 
+**Label fixes after Run 05.** Two new questions had labeling problems: d22's answer is also stated on p. 30 (gold pages
+now 29;30), and d17 was ambiguous because the guideline reports odds ratios for low platelets from several reviews
+(now "In the pooled analysis of 20 studies…"). The reworded d17 was checked again against the unseen set (scores 0.47 / 0.13).
+
 ## Issue tracker
 
 | ID | Found in | Area | Problem | Change | Status |
@@ -78,11 +84,14 @@ validated). The first 15 questions are unchanged, so v1 results stay comparable 
 | I-03 | Run 02 | Retrieval | Cutoff applied to each chunk, so the answer chunk for d03 (p. 40, rank 3) never reached the LLM | Cutoff as a gate on the best chunk (`5bb1978`) | ✅ confirmed in Run 03 |
 | I-04 | Run 02 | Prompt | Qwen d09 says "recommends against" where the guideline says "suggests against" | Prompt v2 rule 4: keep the guideline's own verb | 🟡 Run 04: Qwen 2/7 → 6/7; d08 still "recommends against" |
 | I-05 | Run 02 | Prompt | d11 lists admission criteria from other groups (pp. 59-60, 2009 WHO) next to the DOH criteria | Prompt v2 rule 5: other groups named or left out | ✅ confirmed in Run 04 (WHO, PAHO, Malaysia named) |
-| I-06 | Run 02 | Prompt | Taglish questions answered in English (Qwen d12; Gemma d11 and d12) | Prompt v2 rule 8: Filipino or Taglish in, Filipino or Taglish out | ❌ not fixed in Run 04: 0/2 for both models (Qwen was 1/2 with v1) |
+| I-06 | Run 02 | Prompt | Taglish questions answered in English (Qwen d12; Gemma d11 and d12) | Prompt v2 rule 8: Filipino or Taglish in, Filipino or Taglish out | ❌ not fixed: Run 04 0/2 both models; Run 05 Qwen 1/7 |
 | I-07 | Run 03 | Prompt | Qwen adds sentences without a citation, some not in the excerpts (d03: why IgM/IgG works after day 5) | Prompt v2 rules 1-2: no own explanations, every sentence cited | 🟡 Run 04: uncited sentences Qwen 12/44 → 4/32, Gemma 7/31 → 2/31 |
 | I-08 | Run 03 | Prompt | Gemma copies the guideline's "we recommend", so the answer reads as Denguide's own recommendation | Prompt v2 rule 3: third person ("The CPG recommends") | ✅ confirmed in Run 04 (0 answers with "we") |
 | I-09 | Run 03 | Model | Gemma cited 2 pages it was not given (d02 p. 33, d08 p. 93; the tawa-tawa recommendation is on p. 90) | Prompt v2 rule 2: cite only excerpt-label pages; citation accuracy now measured in every run | 🟡 Run 04: Gemma 18/20 → 22/23; the one left is "n = 93" (p. 96 table) read as p. 93 |
 | I-10 | Run 04 | Prompt | Strength and certainty left out more often with v2 (Gemma 6 → 4 of 9 recommendation answers, Qwen 7 → 6) | none yet | 🔍 open |
+| I-11 | Run 05 | Setup | Gemma 3 12B (float32) ran out of GPU memory on a long prompt, with BGE-M3 also on the GPU | BGE-M3 on the CPU before any LLM loads; `expandable_segments`; app embeds on the CPU | 🔁 check in Run 06 |
+| I-12 | Run 05 | Retrieval | On dev set v2 the cutoff no longer separates the groups: 3 out-of-scope questions score 0.620-0.633, the lowest in-scope 0.613 | none yet (experiments: reranker, hybrid retrieval) | 🔍 open |
+| I-13 | Run 05 | Prompt | Out-of-scope herbal question (d40, lagundi/kamote) answered with papaya evidence instead of a refusal | none yet | 🔍 open |
 
 Status key: ✅ fixed and confirmed · 🟡 improved, not fully fixed · 🔁 fixed, waiting for the next run to confirm · ❌ change did not work · 🔍 open.
 Prompt issues are reviewed by a member who did not write the unseen set. Colab setup fixes (token handling,
@@ -251,9 +260,17 @@ Prompt v2 is better on five of the six target issues and keeps answering and ref
 language of Taglish answers (I-06), and certainty was left out a little more often (I-10). Gemma's one citation error
 comes from reading "n = 93" in a table as a page number.
 
-### Run 05: experiments, baseline on dev set v2
+### Run 05: baseline on dev set v2, attempt 1
 
-**⏳ next.** Prompt v2 stays. Before any experiment, Run 05 sets a baseline on the 40-question dev set: retrieval
-metrics and a re-tuned cutoff (11 out-of-scope questions instead of 3), then both models with the Run 04 setup.
-Planned experiments after it, one change per run: top-k, chunk size, a reranker, hybrid retrieval, and prompt v3 for
-I-06 and I-10. Step 3 (final unseen run) comes after the group freezes the settings.
+**2026-11-25 · Colab T4 · ❌ failed** · folder [`Run05_2026-11-25_Exp_baseline-dev-v2-attempt1`](Run05_2026-11-25_Exp_baseline-dev-v2-attempt1/) · [changes in this run](Run05_2026-11-25_Exp_baseline-dev-v2-attempt1/README.md) · code `5709f88` · outputs commit `e051518`
+
+First run on the 40-question dev set. Retrieval: recall@4 0.931, MRR 0.759, precision@4 0.379 (both misses were label
+problems, fixed for Run 06). The cutoff stayed 0.61 but no longer separates the groups (I-12). Qwen3-8B finished all 40:
+29 of 29 in scope answered, 10 of 11 out of scope refused (two of them by the prompt after passing the cutoff),
+citation accuracy 1.000, Taglish in Filipino 1 of 7, 8.45 s per question. Gemma 3 12B ran out of GPU memory at d16 (I-11).
+
+### Run 06: baseline on dev set v2, attempt 2
+
+**⏳ next** · save message `save_to_github("Run 06: baseline on dev set v2 (40 questions)")`.
+Same as Run 05 with BGE-M3 on the CPU during the LLM runs and the two label fixes. This run is the
+baseline for the experiments (top-k, chunk size, reranker, hybrid retrieval, prompt v3).

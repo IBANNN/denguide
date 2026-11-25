@@ -15,12 +15,12 @@ d13,out_of_scope,What is the paracetamol dose for a 20 kg child with dengue?,Not
 d14,out_of_scope,Should colloids or crystalloids be used for dengue shock syndrome?,Not covered by the guideline.,,0
 d15,out_of_scope,What antibiotic should be given for leptospirosis?,Not covered by the guideline.,,0
 d16,recommendation,Should clinics use a combined NS1/IgM/IgG test kit to diagnose suspected dengue?,"Yes. The CPG recommends the combined dengue NS1/IgM/IgG RDT for suspected dengue (low certainty, strong recommendation).",40,1
-d17,numeric_table,What is the odds ratio of a low platelet count for severe dengue?,"OR 1.76 (95% CI 1.50-2.06), from 20 studies.",59,1
+d17,numeric_table,"In the pooled analysis of 20 studies, what is the odds ratio of a low platelet count for severe dengue?","OR 1.76 (95% CI 1.50-2.06), from 20 studies.",59,1
 d18,recommendation,Should acid suppressants be used to treat gastrointestinal bleeding in patients with dengue?,"No. The CPG recommends against acid suppressants for treating gastrointestinal bleeding or pain in dengue (very low certainty, strong recommendation).",84,1
 d19,prevention,Is IR3535 repellent recommended over DEET to prevent dengue?,"No. The CPG suggests against IR3535 over DEET repellents for dengue prevention (very low certainty, weak recommendation).",102,1
 d20,recommendation,Should a CBC be requested at the first visit of an outpatient with suspected dengue?,Yes. Good practice statement: request an initial CBC on the first visit to establish baseline hematocrit and platelet count.,64,1
 d21,recommendation,Who is the DOH dengue clinical practice guideline intended for?,Specialists and general practitioners who are primary care providers; it should not restrict clinical judgment.,ii;1,1
-d22,numeric_table,What is the sensitivity of the NS1 rapid test in secondary dengue infection?,"0.36 (95% CI 0.22-0.53), from 4 studies with 1,324 participants.",29,1
+d22,numeric_table,What is the sensitivity of the NS1 rapid test in secondary dengue infection?,"0.36 (95% CI 0.22-0.53), from 4 studies with 1,324 participants.",29;30,1
 d23,numeric_table,How sensitive is the combined NS1/IgM/IgG test in secondary dengue infection?,Sensitivity 0.85 (95% CI 0.75-0.91).,41,1
 d24,herbal,By how many days does Carica papaya shorten the hospital stay of dengue patients?,"Mean difference -1.50 days (95% CI -2.23 to -0.77), 5 RCTs (n = 749), with high heterogeneity; very low certainty.",93;95,1
 d25,numeric_table,How much shorter is the complete protection time of citronella repellents compared with DEET?,"Almost 3 hours less complete protection time (RR -2.84, 95% CI -3.91 to -1.77; 4 RCTs).",102;105,1

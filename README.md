@@ -49,6 +49,7 @@ Branch per task (`step1-index`, `step2-qwen-dev`, ...), open a pull request, and
 
 ## Running on Colab
 
+
 1. Runtime > Change runtime type > **T4 GPU**.
 2. Colab Secrets: `HF_TOKEN` (Hugging Face read token), `GITHUB_TOKEN` (fine-grained token for this repo with Contents: Read and write), optional `GEMINI_API_KEY` (judge).
 3. Accept the Gemma license at https://huggingface.co/google/gemma-3-12b-it with the same Hugging Face account.

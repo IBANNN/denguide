@@ -34,7 +34,8 @@ st.set_page_config(page_title="Denguide", page_icon="🦟", layout="centered")
 # ---------------------------------------------------------------- cached resources
 @st.cache_resource(show_spinner="Loading the guideline index...")
 def get_rag():
-    return DenguideRAG(load_index(get_embed_model()))
+    # BGE-M3 runs on the CPU so the LLM has the whole GPU (Gemma 3 12B in float32 needs it on a T4).
+    return DenguideRAG(load_index(get_embed_model(device="cpu")))
 
 
 @st.cache_resource

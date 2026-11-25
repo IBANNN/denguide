@@ -29,6 +29,21 @@ def get_embed_model(device=None):
     )
 
 
+def move_embed_model(embed_model, device):
+    """
+    Move BGE-M3 to another device ("cpu" or "cuda") without reloading it.
+    On the T4, the LLM needs the GPU memory: Gemma 3 12B in float32 ran out of memory with BGE-M3
+    on the GPU (Run 05). Query embedding on the CPU adds well under a second per question.
+    """
+    model = getattr(embed_model, "_model", None)        # the SentenceTransformer inside LlamaIndex
+    if model is None:
+        raise AttributeError("Embedding model has no _model; check the llama-index-embeddings-huggingface version.")
+    model.to(device)
+    if hasattr(embed_model, "_device"):
+        embed_model._device = device                     # some versions pass this device to encode()
+    return str(next(model.parameters()).device)
+
+
 def _collection(rebuild=False):
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
     name = CONFIG["collection"]
