@@ -75,6 +75,29 @@ validated). The first 15 questions are unchanged, so v1 results stay comparable 
 now 29;30), and d17 was ambiguous because the guideline reports odds ratios for low platelets from several reviews
 (now "In the pooled analysis of 20 studies…"). The reworded d17 was checked again against the unseen set (scores 0.47 / 0.13).
 
+## Unseen set versions
+
+| Version | Questions | Written by | Date | SHA-256 |
+|---|---|---|---|---|
+| v1 | U01-U40 | Adrian Ivan Aldea, before any tuning | 2026-11-25 | `e7baf3a48cb94f559d4467fc75410836f546c7c23ed2ac9eaeb400bb1ae88c11` (superseded) |
+| v2 | U01-U50 | U01-U40 as above; U41-U50 by Claude Code | 2026-11-26 | `bef34b6a803391c44c0bee5222316cbef933379ea17a0fca3ea7a70252bbd55e` |
+
+**Why v2.** The course asks for at least 50 unseen questions. The first 40 rows are byte for byte the v1 file.
+
+**How U41-U50 were made.** Claude Code wrote them from the cleaned guideline text after Runs 01-05, without reading
+U01-U40, and only from facts no development question uses. Checks before adding them:
+- every gold page was confirmed by finding the answer's key phrase on that page in the cleaned text and in the index;
+- the two out-of-scope topics (incubation period, antihistamines for itching) have no mention in the index;
+- a script compared each draft with U01-U40 and with d01-d40 and printed only similarity scores. Three drafts scored too
+  close (one was an exact match of an existing unseen question) and were replaced. The kept questions score at most
+  0.69 text similarity and 0.33 word overlap.
+
+**Limitation to declare.** The assistant that wrote U41-U50 also helped tune the prompt. These ten questions were never
+used for tuning, and the final run uses the v2 hash.
+
+Mix of v2: 19 recommendation, 10 numeric, 8 prevention and herbal, 6 out-of-scope, 7 Taglish (2 of them out of scope);
+43 in scope, 7 out of scope.
+
 ## Issue tracker
 
 | ID | Found in | Area | Problem | Change | Status |

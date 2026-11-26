@@ -68,7 +68,7 @@ The LLMs and BGE-M3 need a GPU for reasonable speed, so model runs happen on Col
 
 ## Unseen test set (leakage control)
 
-- One member writes about 40 questions from the guideline **before any tuning**.
+- 50 questions: one member wrote 40 **before any tuning**; 10 more (U41-U50) were added on 2026-11-26 to reach the course minimum of 50 (see `runs/README.md`).
 - The file lives only in the private Drive work folder (`eval/unseen/unseen_questions.csv`), not in this repo.
 - Its SHA-256 hash is recorded in the progress report. The notebook checks the hash before the final run.
 - It is committed here only after the final run (`FINAL_RUN_DONE = True` in the notebook).
