@@ -92,6 +92,7 @@ now 29;30), and d17 was ambiguous because the guideline reports odds ratios for 
 | I-11 | Run 05 | Setup | Gemma 3 12B (float32) ran out of GPU memory on a long prompt, with BGE-M3 also on the GPU | BGE-M3 on the CPU before any LLM loads; `expandable_segments`; app embeds on the CPU | 🔁 check in Run 06 |
 | I-12 | Run 05 | Retrieval | On dev set v2 the cutoff no longer separates the groups: 3 out-of-scope questions score 0.620-0.633, the lowest in-scope 0.613 | none yet (experiments: reranker, hybrid retrieval) | 🔍 open |
 | I-13 | Run 05 | Prompt | Out-of-scope herbal question (d40, lagundi/kamote) answered with papaya evidence instead of a refusal | none yet | 🔍 open |
+| I-14 | Run 01 (found 2026-11-26) | Cleaning | In 5 of 53 tables (pp. 29-30, 42-44) a two-line column header is cut: "No. of Studies (No. of" instead of "No. of Studies (No. of participants)". The values are intact. | none yet | 🔍 open, minor |
 
 Status key: ✅ fixed and confirmed · 🟡 improved, not fully fixed · 🔁 fixed, waiting for the next run to confirm · ❌ change did not work · 🔍 open.
 Prompt issues are reviewed by a member who did not write the unseen set. Colab setup fixes (token handling,
